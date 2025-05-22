@@ -53,7 +53,7 @@ public class StudentCreateExecuteAction extends Action {
                 student.setNo(student_no);
                 student.setName(student_name);
                 student.setClassNum(class_num);
-                student.setAttend(true);
+                student.setIsAttend(true);
                 student.setSchool(teacher.getSchool());
 
                 studentDao.save(student);
