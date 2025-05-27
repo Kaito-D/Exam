@@ -27,4 +27,8 @@ public class TestDao extends Dao {
 	private boolean save(Test test, Connection connection){
 		return true;
 	}
+	public List<Test> filter(School school) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
 }
