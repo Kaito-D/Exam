@@ -39,7 +39,6 @@ public class TestDao extends Dao {
 					test.setSchool(schoolDao.get(resultSet.getString("school_cd")));
 					test.setNo(resultSet.getInt("no"));
 					test.setPoint(resultSet.getInt("point"));
-
 				}
 				else {
 					test = null;
@@ -120,24 +119,59 @@ public class TestDao extends Dao {
 
 		return list;
 	}
-	public boolean save(List<Test> list){
-
+	public boolean save(List<Test> list)throws Exception {
+		try{
+			for (Test test : list) {
+				Connection connection = getConnection();
+				save(test, connection);
+			}
+		} catch (Exception e) {
+			throw e;
+		}
 		return true;
 	}
-	private boolean save(Test test, Connection connection){
-		    String sql = "INSERT INTO tests (id, name, score) VALUES (?, ?, ?)";
-
-		    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-		        stmt.setInt(1, test.getId());
-		        stmt.setString(2, test.getName());
-		        stmt.setDouble(3, test.getScore());
-
-		        int rowsAffected = stmt.executeUpdate();
-		        return rowsAffected > 0;
-		    } catch (SQLException e) {
-		        e.printStackTrace(); // or use a logger
-		        return false;
-		    }
-		return true;
+	private boolean save(Test test, Connection connection)throws Exception{
+		Test test1 = new Test();
+		PreparedStatement statement = null;
+		int count = 0;
+		try {
+			 test1 = get(test.getStudent(), test.getSubject(), test.getSchool(), test.getNo());
+			if(test1 == null){
+				statement = connection.prepareStatement("insert into test (student_no, subject_cd, school_cd, no, point, class_num) values (?,?,?,?,?,?)");
+				statement.setString(1, test.getStudent().getNo());
+				statement.setString(2, test.getSubject().getCd());
+				statement.setString(3, test.getSchool().getCd());
+				statement.setInt(4, test.getNo());
+				statement.setInt(5, test.getPoint());
+				statement.setString(6, test.getClassNum());
+			}else{
+				statement = connection.prepareStatement("update student set student_no=?, subject_cd?, school_cd=?, no=?, point=?, class_num=?");
+				statement.setString(1, test.getStudent().getNo());
+				statement.setString(2, test.getSubject().getCd());
+				statement.setString(3, test.getSchool().getCd());
+				statement.setInt(4, test.getNo());
+				statement.setInt(5, test.getPoint());
+				statement.setString(6, test.getClassNum());
+			}
+			count = statement.executeUpdate();
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException sqle) {
+					throw sqle;
+				}
+			}
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException sqle) {
+					throw sqle;
+				}
+			}
+		}
+		return (count > 0);
 	}
 }
