@@ -174,4 +174,8 @@ public class TestDao extends Dao {
 		}
 		return (count > 0);
 	}
+	public List<Test> filter(School school) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
 }
