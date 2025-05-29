@@ -14,7 +14,11 @@ import tool.Action;
 
 public class TestRegistExecuteAction extends Action {
 
-    @Override
+    private static java.util.List<bean.Test> list;
+	private static final java.util.List<bean.Test> List = list;
+	private static final int Test = 0;
+
+	@Override
     public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
         // セッション情報の取得
         HttpSession session = req.getSession(false);
@@ -51,11 +55,12 @@ public class TestRegistExecuteAction extends Action {
 
             // DAOによる保存処理
             TestDao testDao = new TestDao();
-            if (!testDao.save(test)) {
+			boolean list;
+			if (!testDao.save(List)) {
                 forwardError(req, res, "成績の登録に失敗しました。");
                 return;
             }
-            
+
             req.getRequestDispatcher("score_register_done.jsp").forward(req, res);
 
         } catch (NumberFormatException e) {
