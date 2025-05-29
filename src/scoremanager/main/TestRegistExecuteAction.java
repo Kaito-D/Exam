@@ -1,49 +1,87 @@
 package scoremanager.main;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import bean.Subject;
 import bean.Teacher;
-import dao.SubjectDao;
+import bean.Test;
+import dao.TestDao;
 import tool.Action;
 
 public class TestRegistExecuteAction extends Action {
 
-	@Override
-	public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-		// TODO 自動生成されたメソッド・スタブ
-		//ローカル変数の宣言1
-		HttpSession session = req.getSession(); // セッション
-		Teacher teacher = (Teacher)session.getAttribute("user");
-		String subject_cd = "" ;
-		String subject_name = "";
-		Subject subject = new Subject();
-		SubjectDao subjectDao = new SubjectDao();
+    @Override
+    public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        // セッション情報の取得
+        HttpSession session = req.getSession(false);
+        if (session == null || !(session.getAttribute("user") instanceof Teacher)) {
+            forwardError(req, res, "ログインしてください。");
+            return;
+        }
+        Teacher teacher = (Teacher) session.getAttribute("user");
 
-		//リクエストパラメーターの取得2
-		subject_cd = req.getParameter("cd");
-		subject_name = req.getParameter("name");
+        // リクエストパラメータ取得
+        Map<String, String> params = new HashMap<>();
+        params.put("studentId", req.getParameter("student_id"));
+        params.put("subjectCd", req.getParameter("subject_cd"));
+        params.put("scoreValue", req.getParameter("score"));
+        params.put("entYearStr", req.getParameter("ent_year"));
+        params.put("classNum", req.getParameter("class_num"));
+        params.put("noStr", req.getParameter("no"));
+        params.put("testNoStr", req.getParameter("test_no"));
 
-		//DBからデータ取得3
-		//なし
+        // 必須項目チェック
+        if (params.values().stream().anyMatch(value -> value == null || value.isEmpty())) {
+            forwardError(req, res, "すべての項目を入力してください。");
+            return;
+        }
 
-		//ビジネスロック4
+        try {
+            int scoreNum = validateAndParseInteger(params.get("scoreValue"), 0, 100, "成績は0～100の範囲で入力してください。");
+            int entYear = validateAndParseInteger(params.get("entYearStr"), "入学年度は正しい値を入力してください。");
+            int no = validateAndParseInteger(params.get("noStr"), "出席番号は正しい値を入力してください。");
+            int testNo = validateAndParseInteger(params.get("testNoStr"), 1, 2, "試験回数は1または2のみ選択可能です。");
 
-		//subjectに科目情報をセット
-		subject.setCd(subject_cd);
-		subject.setName(subject_name);
-		subject.setSchool(teacher.getSchool());
+            // Testオブジェクトの作成
+            Test test = new Test();
 
-		//変更内容を保存
-		subjectDao.save(subject);
+            // DAOによる保存処理
+            TestDao testDao = new TestDao();
+            if (!testDao.save(test)) {
+                forwardError(req, res, "成績の登録に失敗しました。");
+                return;
+            }
+            
+            req.getRequestDispatcher("score_register_done.jsp").forward(req, res);
 
-		//レスポンス値をセット6
-		//なし
+        } catch (NumberFormatException e) {
+            forwardError(req, res, e.getMessage());
+        }
+    }
 
-		//jspへフォワード
-		req.getRequestDispatcher("test_regist_done.jsp").forward(req, res);
-	}
+    // 汎用的な数値変換＆バリデーション
+    private int validateAndParseInteger(String value, String errorMessage) throws NumberFormatException {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException(errorMessage);
+        }
+    }
 
+    private int validateAndParseInteger(String value, int min, int max, String errorMessage) throws NumberFormatException {
+        int parsedValue = validateAndParseInteger(value, errorMessage);
+        if (parsedValue < min || parsedValue > max) {
+            throw new NumberFormatException(errorMessage);
+        }
+        return parsedValue;
+    }
+
+    private void forwardError(HttpServletRequest req, HttpServletResponse res, String message) throws Exception {
+        req.setAttribute("error", message);
+        req.getRequestDispatcher("error.jsp").forward(req, res);
+    }
 }
