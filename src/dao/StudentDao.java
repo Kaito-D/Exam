@@ -74,7 +74,7 @@ public class StudentDao extends Dao {
 		PreparedStatement statement = null;
 		String conditionAttend = "";
 		if(isAttend) {
-		conditionAttend = " and is_attend-true ";
+		conditionAttend = " and is_attend=true ";
 		}
 		try {
 			statement = connection.prepareStatement(

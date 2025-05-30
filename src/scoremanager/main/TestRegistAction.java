@@ -17,8 +17,11 @@ import dao.TestDao;
 import tool.Action;
 
 public class TestRegistAction extends Action {
+<<<<<<< HEAD
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
+=======
+>>>>>>> branch 'master' of https://github.com/Kaito-D/Exam.git
 
         HttpSession session = req.getSession();
         Teacher teacher = (Teacher)session.getAttribute("user");

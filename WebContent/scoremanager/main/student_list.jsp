@@ -24,6 +24,7 @@
                 </c:forEach>
             </select>
         </div>
+        
         <div>
             <label>在学生</label>
             <input type="checkbox" name="f3" value="t" <c:if test="${!empty f3 }">checked</c:if> />
