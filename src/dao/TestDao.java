@@ -20,7 +20,7 @@ public class TestDao extends Dao {
 			Connection connection = getConnection();
 			PreparedStatement statement = null;
 			try {
-				statement = connection.prepareStatement("select * from Test where student_no=? and subject_cd=? and school_cd=? and int_no=?");
+				statement = connection.prepareStatement("select * from Test where student_no=? and subject_cd=? and school_cd=? and no=?");
 				statement.setString(1,student.getNo());
 				statement.setString(2,subject.getCd());
 				statement.setString(3,school.getCd());
@@ -89,7 +89,7 @@ public class TestDao extends Dao {
 		Connection connection = getConnection();
 		PreparedStatement statement = null;
 		try{
-			statement = connection.prepareStatement("select * from List where rSet=no? and school_no=?");
+			statement = connection.prepareStatement("select * from Test where student_no=? and subject_cd=? and school_cd=? and no=? and point=? and class_num=?");
 			statement.setInt(1,entYear);
 			statement.setString(2,classNum);
 			statement.setString(3,subject.getCd());
