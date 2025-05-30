@@ -28,7 +28,7 @@ public class TestListAction extends Action {
 
 		int year = todaysDate.getYear();
 
-		List<String>cNumlist = cNumDao.filter(teacherSchool);
+		List<String>numlist = cNumDao.filter(teacherSchool);
 		List<Subject>list = subjectDao.filter(teacherSchool);
 
 		List<Integer> entYearSet = new ArrayList<>();
@@ -36,7 +36,7 @@ public class TestListAction extends Action {
 		for (int i = year - 10; i < year + 11; i++){
 			entYearSet.add(i);
 		}
-		 req.setAttribute("cNumlist",cNumlist);
+		 req.setAttribute("Numlist",numlist);
 		 req.setAttribute("list",list);
 		 req.setAttribute("entYearSet",entYearSet);
 

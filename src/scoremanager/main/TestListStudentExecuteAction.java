@@ -17,9 +17,9 @@ public class TestListStudentExecuteAction extends Action {
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
-        Student student = (Student) session.getAttribute("student");
+        Student teacher = (Student) session.getAttribute("student");
 
-        if (student == null) {
+        if (teacher == null) {
             // ログインしていない場合、ログインページへフォワード
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
@@ -27,12 +27,12 @@ public class TestListStudentExecuteAction extends Action {
 
         // 成績一覧を取得
         TestListStudentDao dao = new TestListStudentDao();
-        List<TestListStudent> testList = dao.filter(student);
+        List<TestListStudent> testList = dao.filter(teacher);
 
         // リクエストスコープに保存
         request.setAttribute("testList", testList);
 
         // 成績表示ページへフォワード
-        request.getRequestDispatcher("testliststudent.jsp").forward(request, response);
+        request.getRequestDispatcher("test_list_student.jsp").forward(request, response);
     }
 }

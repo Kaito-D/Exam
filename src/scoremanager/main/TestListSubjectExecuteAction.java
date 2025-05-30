@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import bean.Subject;
+import bean.Teacher;
 import bean.TestListSubject;
 import dao.TestListSubjectDao;
 import tool.Action;
@@ -15,13 +15,16 @@ public class TestListSubjectExecuteAction extends Action {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+    	
+    	int subject = 0; 
+    	
         HttpSession session = request.getSession();
-        Subject subject = (Subject) session.getAttribute("subject");
+        Teacher teacher = (Teacher)session.getAttribute("user");
+        subject = Integer.parseInt( request.getParameter("subject") );
 
-        if (subject == null) {
+        if (teacher == null) {
             // ログインしていない場合、ログインページへフォワード
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("../login.jsp").forward(request, response);
             return;
         }
 
@@ -33,6 +36,6 @@ public class TestListSubjectExecuteAction extends Action {
         request.setAttribute("testList", testList);
 
         // 成績表示ページへフォワード
-        request.getRequestDispatcher("testlistsubject.jsp").forward(request, response);
+        request.getRequestDispatcher("test_list_subject.jsp").forward(request, response);
     }
 }

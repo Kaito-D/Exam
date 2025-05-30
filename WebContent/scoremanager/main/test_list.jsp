@@ -27,7 +27,7 @@
             <label>クラス</label>
             <select name="f2">
               <option value="0">--------</option>
-              <c:forEach var="num" items="${numList}">
+              <c:forEach var="num" items="${Numlist}">
                 <option value="${num}" <c:if test="${num==f2}">selected</c:if>>${num}</option>
               </c:forEach>
             </select>
